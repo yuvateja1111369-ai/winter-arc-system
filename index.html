@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINTER ARC // SYSTEM INTERFACE</title>
+    <!-- Google Fonts for futuristic gaming aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS for utility styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* Custom Wallpaper Watermark Background Embedded via Base64 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .font-system {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Crisp, sharp electric blue system borders with NO blur */
+        .system-box {
+            background: rgba(2, 6, 23, 0.92);
+            border: 2px solid #00f0ff;
+            position: relative;
+        }
+        .system-box::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px;
+            width: 10px; height: 10px;
+            border-top: 4px solid #00f0ff;
+            border-left: 4px solid #00f0ff;
+        }
+        .system-box::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 10px; height: 10px;
+            border-bottom: 4px solid #00f0ff;
+            border-right: 4px solid #00f0ff;
+        }
+        .system-input {
+            background: #090d16;
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            outline: none;
+        }
+        .system-input:focus {
+            background: #0f172a;
+            border-color: #38bdf8;
+        }
+        .system-btn {
+            background: #00f0ff;
+            color: #020617;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            clip-path: polygon(8% 0, 100% 0, 100% 70%, 92% 100%, 0 100%, 0 30%);
+            transition: background 0.1s ease;
+        }
+        .system-btn:hover {
+            background: #38bdf8;
+        }
+        /* Custom Checkbox */
+        .system-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00f0ff;
+            background: #090d16;
+            cursor: pointer;
+            position: relative;
+        }
+        .system-checkbox:checked {
+            background: #00f0ff;
+        }
+        .system-checkbox:checked::after {
+            content: '✔';
+            position: absolute;
+            top: -3px;
+            left: 3px;
+            color: #020617;
+            font-weight: bold;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER TITLE -->
+    <header class="w-full text-center py-4 border-b-2 border-cyan-400 bg-black/80 backdrop-blur-sm">
+        <h2 class="font-system text-cyan-400 tracking-widest text-xs uppercase">S U N G &nbsp; J I N - W O O</h2>
+        <h1 class="font-system text-lg font-black text-white tracking-widest mt-1">W I N T E R &nbsp; A R C &nbsp; S Y S T E M</h1>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-4">
+
+        <!-- AUTH VIEW (LOGIN / REGISTER) -->
+        <div id="auth-view" class="w-full max-w-md system-box p-6 md:p-8">
+            <!-- Notification Header Box -->
+            <div class="border-2 border-cyan-400 bg-black p-3 mb-6 text-center relative">
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-cyan-400 text-black px-3 py-0.5 text-xs font-system font-bold uppercase">
+                    [ NOTIFICATION ]
+                </div>
+                <p class="text-cyan-300 text-sm mt-1 font-system tracking-wide">You have acquired the qualifications to be a Player. Will you accept?</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="grid grid-cols-2 gap-2 mb-6">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400 bg-cyan-400 text-black">LOGIN</button>
+                <button id="tab-register" onclick="switchAuthTab('register')" class="py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400/50 text-cyan-400 bg-black">REGISTER</button>
+            </div>
+
+            <div id="auth-error" class="hidden mb-4 p-3 bg-black border-2 border-red-500 text-red-400 text-xs text-center font-system"></div>
+            <div id="auth-success" class="hidden mb-4 p-3 bg-black border-2 border-cyan-400 text-cyan-300 text-xs text-center font-system"></div>
+
+            <!-- Form -->
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block font-system text-xs uppercase text-cyan-400 mb-1 tracking-wider">Player Username</label>
+                    <input type="text" id="username" required placeholder="Enter player name..." class="w-full px-3 py-2 text-sm system-input">
+                </div>
+                <div>
+                    <label class="block font-system text-xs uppercase text-cyan-400 mb-1 tracking-wider">Access Password</label>
+                    <input type="password" id="password" required placeholder="••••••••" class="w-full px-3 py-2 text-sm system-input">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full py-3 mt-2 system-btn text-sm tracking-widest">
+                    INITIALIZE PLAYER &rarr;
+                </button>
+            </form>
+        </div>
+
+        <!-- DASHBOARD VIEW (HIDDEN INITIALLY) -->
+        <div id="dashboard-view" class="w-full max-w-6xl system-box p-6 md:p-8 hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-2 border-cyan-400/40 pb-4 mb-6 gap-4">
+                <div>
+                    <div class="text-xs font-system text-cyan-400 tracking-widest">[ SYSTEM STATUS: ACTIVE ]</div>
+                    <h2 class="text-xl font-black font-system text-white tracking-wider mt-1">PLAYER: <span id="display-username" class="text-cyan-400"></span></h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="text-xs font-system text-cyan-400 tracking-wider">SELECTED DATE DISCIPLINE</div>
+                        <div class="text-lg font-bold font-system text-white" id="completion-rate">0%</div>
+                    </div>
+                    <button onclick="handleLogout()" class="px-3 py-2 border-2 border-red-500 text-red-400 text-xs font-system uppercase bg-black hover:bg-red-950">EXIT SYSTEM</button>
+                </div>
+            </div>
+
+            <!-- Date Selector & Countdown Info -->
+            <div class="flex flex-col sm:flex-row justify-between items-center bg-black/90 border-2 border-cyan-400/40 p-4 mb-6 gap-3">
+                <div class="flex items-center gap-3">
+                    <label class="font-system text-xs text-cyan-400 uppercase">Select Active Date:</label>
+                    <input type="date" id="tracker-date" min="2026-10-01" max="2027-01-01" onchange="onDateInputChange(this.value)" class="px-3 py-1 text-xs system-input">
+                </div>
+                <div class="font-system text-xs text-cyan-300 tracking-wider text-center sm:text-right">
+                    WINTER ARC: OCT 1, 2026 – JAN 1, 2027
+                </div>
+            </div>
+
+            <!-- INTERNAL INTERFACE GRID LAYOUT -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- LEFT COLUMN: Calendar & Sleep Log -->
+                <div class="space-y-6">
+                    <!-- WINTER ARC CALENDAR SECTION (OCT 1 - JAN 1) -->
+                    <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                        <div class="flex flex-col justify-between items-center mb-3 gap-2">
+                            <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase flex items-center gap-1">
+                                <span>📅</span> 90-DAY CALENDAR
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <button onclick="changeCalendarMonth(-1)" class="px-2 py-0.5 border border-cyan-400 text-cyan-400 text-[10px] font-system bg-slate-950 hover:bg-cyan-950">&larr;</button>
+                                <span id="calendar-month-title" class="font-system text-[11px] text-white uppercase font-bold min-w-[100px] text-center">OCTOBER 2026</span>
+                                <button onclick="changeCalendarMonth(1)" class="px-2 py-0.5 border border-cyan-400 text-cyan-400 text-[10px] font-system bg-slate-950 hover:bg-cyan-950">&rarr;</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-center font-system text-[9px] text-cyan-400/70 mb-1">
+                            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1">
+                            <!-- Dynamic Calendar Days injected here -->
+                        </div>
+                    </div>
+
+                    <!-- SLEEP HOUR TABLE SECTION -->
+                    <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                        <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase mb-3 flex items-center gap-2">
+                            <span>🌙</span> SLEEP RECOVERY LOG
+                        </h3>
+                        <div class="grid grid-cols-5 gap-1.5" id="sleep-table-container">
+                            <!-- Dynamic Sleep Buttons injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Graphic Meter, Protocol Management & Checklist -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- PROTOCOL MODIFICATION BOXES (ADD / DELETE RULES) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                            <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase mb-2">➕ ADD CUSTOM RULE</h3>
+                            <input type="text" id="new-rule-input" placeholder="Enter protocol..." class="w-full px-3 py-1.5 text-xs system-input mb-2">
+                            <button onclick="handleAddRule()" class="w-full py-1.5 system-btn text-xs">ADD PROTOCOL</button>
+                        </div>
+                        <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                            <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase mb-2">🗑 DELETE RULE</h3>
+                            <select id="delete-rule-select" class="w-full px-3 py-1.5 text-xs system-input mb-2">
+                                <!-- Populated dynamically -->
+                            </select>
+                            <button onclick="handleDeleteRule()" class="w-full py-1.5 bg-red-950 border-2 border-red-500 text-red-400 font-system text-xs uppercase font-bold hover:bg-red-900">REMOVE</button>
+                        </div>
+                    </div>
+
+                    <!-- GRAPHIC PROGRESS REPRESENTATION SECTION -->
+                    <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                        <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase mb-2 flex items-center justify-between">
+                            <span>📊</span> <span id="graphic-header-date">GRAPHIC PROGRESS METER</span>
+                            <span id="graphic-status-text" class="text-xs text-cyan-300">0 / 16</span>
+                        </h3>
+                        <div class="w-full bg-slate-900 border-2 border-cyan-400/30 h-5 relative overflow-hidden mb-2">
+                            <div id="progress-bar-fill" class="bg-cyan-400 h-full transition-all duration-300" style="width: 0%"></div>
+                            <div class="absolute inset-0 flex items-center justify-center font-system text-[10px] font-bold text-black mix-blend-difference" id="progress-bar-label">
+                                0% COMPLETE
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-system">
+                            <div class="border border-cyan-400/30 p-1.5 bg-slate-950 flex justify-between items-center">
+                                <span class="text-slate-400 text-[10px]">SLEEP:</span>
+                                <span id="graphic-sleep-val" class="text-cyan-400 font-bold text-[11px]">NONE</span>
+                            </div>
+                            <div class="border border-cyan-400/30 p-1.5 bg-slate-950 flex justify-between items-center">
+                                <span class="text-slate-400 text-[10px]">RANK:</span>
+                                <span id="graphic-rank-val" class="text-cyan-400 font-bold text-[11px]">E-RANK</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rules Checklist Grid -->
+                    <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                        <h3 class="font-system text-xs text-cyan-400 tracking-widest uppercase mb-3 flex items-center gap-2">
+                            <span>⚡</span> DAILY QUESTS: WINTER ARC PROTOCOLS
+                        </h3>
+                        <div id="rules-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[30vh] overflow-y-auto pr-2">
+                            <!-- Dynamic Rules Injected Here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OVERALL PROGRESS LINE GRAPH SECTION (OCT 1 - JAN 1) -->
+            <div class="bg-black/90 border-2 border-cyan-400/40 p-4">
+                <h3 class="font-system text-sm text-cyan-400 tracking-widest uppercase mb-3 flex items-center justify-between">
+                    <span>📈</span> OVERALL ARC PROGRESS LINE GRAPH (OCT 2026 - JAN 2027)
+                    <span class="text-xs text-cyan-300">90-DAY TREND</span>
+                </h3>
+                <div class="w-full bg-slate-950 border border-cyan-400/30 p-2 overflow-x-auto">
+                    <svg id="trend-line-chart" class="w-full h-36 min-w-[600px]" viewBox="0 0 920 140">
+                        <line x1="0" y1="0" x2="920" y2="0" stroke="#1e293b" stroke-width="1" />
+                        <line x1="0" y1="35" x2="920" y2="35" stroke="#1e293b" stroke-width="1" />
+                        <line x1="0" y1="70" x2="920" y2="70" stroke="#1e293b" stroke-width="1" />
+                        <line x1="0" y1="105" x2="920" y2="105" stroke="#1e293b" stroke-width="1" />
+                        <line x1="0" y1="140" x2="920" y2="140" stroke="#1e293b" stroke-width="1" />
+                    </svg>
+                </div>
+                <div class="flex justify-between text-[10px] font-system text-slate-400 mt-2">
+                    <span>OCT 1, 2026</span>
+                    <span>NOV 1</span>
+                    <span>DEC 1</span>
+                    <span>JAN 1, 2027</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-3 border-t-2 border-cyan-400 bg-black/80 backdrop-blur-sm text-xs font-system text-cyan-400">
+        SYSTEM VER: 3.2.0 // ALL RIGHTS RESERVED
+    </footer>
+
+    <script>
+        const defaultWinterRules = [
+            "WORK OUT 5-6 TIMES A WEEK",
+            "DRINK 1 GALLON OF WATER DAILY",
+            "GET 8 HOURS OF SLEEP DAILY",
+            "MAX OUT YOUR PROTEIN DAILY",
+            "READ 10 PAGES DAILY",
+            "COLD SHOWERS DAILY",
+            "10K STEPS DAILY",
+            "NO FAST FOOD",
+            "NO SUGAR",
+            "NO ALCOHOL",
+            "NO DISTRACTIONS",
+            "WAKE UP BY 5 AM",
+            "GO TO SLEEP BY 8 PM",
+            "FOCUS ON YOURSELF",
+            "NO EXCUSES",
+            "90 DAYS OF PURE DISCIPLINE"
+        ];
+
+        const sleepOptions = [2, 4, 6, 8, 10];
+
+        let currentAuthMode = 'login';
+        let loggedInUser = null;
+        let selectedActiveDate = "2026-10-01";
+        let calendarCurrentYear = 2026;
+        let calendarCurrentMonth = 9; // October
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('tracker-date').value = selectedActiveDate;
+
+            const activeSession = sessionStorage.getItem('winter_arc_active_user');
+            if (activeSession) {
+                loggedInUser = activeSession;
+                showDashboard();
+            }
+        });
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const loginBtn = document.getElementById('tab-login');
+            const registerBtn = document.getElementById('tab-register');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            
+            hideAlerts();
+
+            if (mode === 'login') {
+                loginBtn.className = "py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400 bg-cyan-400 text-black";
+                registerBtn.className = "py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400/50 text-cyan-400 bg-black";
+                submitBtn.innerText = "INITIALIZE PLAYER \u2192";
+            } else {
+                registerBtn.className = "py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400 bg-cyan-400 text-black";
+                loginBtn.className = "py-2 text-sm font-system font-bold tracking-wider uppercase border-2 border-cyan-400/50 text-cyan-400 bg-black";
+                submitBtn.innerText = "REGISTER NEW PLAYER \u2192";
+            }
+        }
+
+        function showAlert(type, message) {
+            const errBox = document.getElementById('auth-error');
+            const succBox = document.getElementById('auth-success');
+            if (type === 'error') {
+                succBox.classList.add('hidden');
+                errBox.innerText = message;
+                errBox.classList.remove('hidden');
+            } else {
+                errBox.classList.add('hidden');
+                succBox.innerText = message;
+                succBox.classList.remove('hidden');
+            }
+        }
+
+        function hideAlerts() {
+            document.getElementById('auth-error').classList.add('hidden');
+            document.getElementById('auth-success').classList.add('hidden');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value;
+
+            if (!usernameInput || !passwordInput) {
+                showAlert('error', 'PLEASE FILL OUT ALL PLAYER CREDENTIALS.');
+                return;
+            }
+
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+
+            if (currentAuthMode === 'register') {
+                if (usersDb[usernameInput]) {
+                    showAlert('error', 'PLAYER USERNAME ALREADY EXISTS. CHOOSE ANOTHER.');
+                    return;
+                }
+                usersDb[usernameInput] = {
+                    password: passwordInput,
+                    customRules: [...defaultWinterRules],
+                    progressData: {}
+                };
+                localStorage.setItem('winter_arc_users_db', JSON.stringify(usersDb));
+                showAlert('success', 'REGISTRATION SUCCESSFUL. ACCESS GRANTED.');
+                
+                setTimeout(() => {
+                    switchAuthTab('login');
+                    document.getElementById('username').value = usernameInput;
+                    document.getElementById('password').value = '';
+                }, 800);
+
+            } else {
+                if (!usersDb[usernameInput]) {
+                    showAlert('error', 'PLAYER NOT FOUND. PLEASE REGISTER FIRST.');
+                    return;
+                }
+                if (usersDb[usernameInput].password !== passwordInput) {
+                    showAlert('error', 'ACCESS DENIED: INCORRECT PASSWORD.');
+                    return;
+                }
+
+                loggedInUser = usernameInput;
+                sessionStorage.setItem('winter_arc_active_user', loggedInUser);
+                showDashboard();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('display-username').innerText = loggedInUser;
+            loadUserData();
+        }
+
+        function handleLogout() {
+            loggedInUser = null;
+            sessionStorage.removeItem('winter_arc_active_user');
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('auth-view').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            switchAuthTab('login');
+            hideAlerts();
+        }
+
+        function onDateInputChange(dateStr) {
+            if (dateStr < "2026-10-01") dateStr = "2026-10-01";
+            if (dateStr > "2027-01-01") dateStr = "2027-01-01";
+            selectedActiveDate = dateStr;
+            document.getElementById('tracker-date').value = selectedActiveDate;
+            
+            const parts = dateStr.split('-');
+            calendarCurrentYear = parseInt(parts[0]);
+            calendarCurrentMonth = parseInt(parts[1]) - 1;
+
+            loadUserData();
+        }
+
+        function changeCalendarMonth(direction) {
+            calendarCurrentMonth += direction;
+            if (calendarCurrentMonth > 11) {
+                calendarCurrentMonth = 0;
+                calendarCurrentYear++;
+            } else if (calendarCurrentMonth < 9 && calendarCurrentYear === 2026) {
+                calendarCurrentMonth = 9;
+            } else if (calendarCurrentMonth > 0 && calendarCurrentYear === 2027) {
+                calendarCurrentMonth = 0;
+            }
+            renderCalendar();
+        }
+
+        function loadUserData() {
+            if (!loggedInUser) return;
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            let userData = usersDb[loggedInUser] || { progressData: {}, customRules: [...defaultWinterRules] };
+            
+            if (!userData.customRules) userData.customRules = [...defaultWinterRules];
+            if (!userData.progressData[selectedActiveDate]) {
+                userData.progressData[selectedActiveDate] = { rules: {}, sleepHours: null };
+            }
+
+            const activeRules = userData.customRules;
+            const dayData = userData.progressData[selectedActiveDate];
+            const rulesProgress = dayData.rules || {};
+            const loggedSleep = dayData.sleepHours;
+
+            renderCalendar();
+            renderTrendLineChart();
+
+            // Render Delete Rule Dropdown
+            const deleteSelect = document.getElementById('delete-rule-select');
+            deleteSelect.innerHTML = '';
+            activeRules.forEach((rule, idx) => {
+                deleteSelect.innerHTML += `<option value="${idx}">${idx + 1}. ${rule}</option>`;
+            });
+
+            // Render Sleep Table Buttons
+            const sleepContainer = document.getElementById('sleep-table-container');
+            sleepContainer.innerHTML = '';
+            sleepOptions.forEach(hours => {
+                const isSelected = loggedSleep === hours;
+                sleepContainer.innerHTML += `
+                    <button onclick="setSleepHours(${hours})" class="py-1.5 border font-system text-[11px] uppercase transition-all ${isSelected ? 'border-cyan-400 bg-cyan-400 text-black font-bold' : 'border-cyan-400/30 bg-black text-cyan-400 hover:border-cyan-400'}">
+                        ${hours}H
+                    </button>
+                `;
+            });
+
+            // Render Rules Grid
+            const container = document.getElementById('rules-container');
+            container.innerHTML = '';
+
+            let completedCount = 0;
+            const totalRulesCount = activeRules.length;
+
+            activeRules.forEach((rule, index) => {
+                const ruleKey = index;
+                const isChecked = !!rulesProgress[ruleKey];
+                if (isChecked) completedCount++;
+
+                const itemHTML = `
+                    <div class="flex items-center justify-between p-2.5 bg-black border ${isChecked ? 'border-cyan-400 bg-cyan-950/20' : 'border-cyan-400/30'}">
+                        <div class="flex items-center gap-2.5">
+                            <input type="checkbox" class="system-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleRule(${ruleKey})">
+                            <span class="font-system text-[11px] ${isChecked ? 'text-cyan-300 line-through' : 'text-slate-200'}">
+                                ${index + 1}. ${rule}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHTML;
+            });
+
+            const rate = totalRulesCount > 0 ? Math.round((completedCount / totalRulesCount) * 100) : 0;
+            
+            document.getElementById('completion-rate').innerText = `${rate}%`;
+            document.getElementById('graphic-header-date').innerText = `METER (${selectedActiveDate})`;
+            document.getElementById('progress-bar-fill').style.width = `${rate}%`;
+            document.getElementById('progress-bar-label').innerText = `${rate}% COMPLETE (${completedCount}/${totalRulesCount})`;
+            document.getElementById('graphic-status-text').innerText = `${completedCount} / ${totalRulesCount}`;
+            
+            document.getElementById('graphic-sleep-val').innerText = loggedSleep ? `${loggedSleep} HRS` : 'NONE';
+
+            let rank = 'E-RANK';
+            if (rate >= 90) rank = 'S-RANK MONARCH';
+            else if (rate >= 70) rank = 'A-RANK HUNTER';
+            else if (rate >= 50) rank = 'B-RANK HUNTER';
+            else if (rate >= 30) rank = 'C-RANK HUNTER';
+            else if (rate >= 10) rank = 'D-RANK HUNTER';
+            document.getElementById('graphic-rank-val').innerText = rank;
+        }
+
+        function handleAddRule() {
+            const input = document.getElementById('new-rule-input');
+            const val = input.value.trim().toUpperCase();
+            if (!val) return;
+
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            if (!usersDb[loggedInUser].customRules) {
+                usersDb[loggedInUser].customRules = [...defaultWinterRules];
+            }
+
+            usersDb[loggedInUser].customRules.push(val);
+            localStorage.setItem('winter_arc_users_db', JSON.stringify(usersDb));
+            input.value = '';
+            loadUserData();
+        }
+
+        function handleDeleteRule() {
+            const select = document.getElementById('delete-rule-select');
+            const idx = parseInt(select.value);
+            if (isNaN(idx)) return;
+
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            let rules = usersDb[loggedInUser].customRules;
+
+            if (rules.length <= 1) {
+                alert("SYSTEM ERROR: YOU MUST RETAIN AT LEAST ONE PROTOCOL.");
+                return;
+            }
+
+            rules.splice(idx, 1);
+            localStorage.setItem('winter_arc_users_db', JSON.stringify(usersDb));
+            loadUserData();
+        }
+
+        function renderCalendar() {
+            const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+            document.getElementById('calendar-month-title').innerText = `${monthNames[calendarCurrentMonth]} ${calendarCurrentYear}`;
+
+            const gridContainer = document.getElementById('calendar-grid');
+            gridContainer.innerHTML = '';
+
+            const usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            const userData = usersDb[loggedInUser] || { progressData: {}, customRules: [...defaultWinterRules] };
+            const progressData = userData.progressData || {};
+            const totalRules = (userData.customRules || defaultWinterRules).length;
+
+            const firstDayIndex = new Date(calendarCurrentYear, calendarCurrentMonth, 1).getDay();
+            const adjustedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+            const totalDays = new Date(calendarCurrentYear, calendarCurrentMonth + 1, 0).getDate();
+
+            for (let i = 0; i < adjustedFirstDay; i++) {
+                gridContainer.innerHTML += `<div class="h-8 bg-slate-950/40 border border-slate-900 opacity-20"></div>`;
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const mStr = String(calendarCurrentMonth + 1).padStart(2, '0');
+                const dStr = String(day).padStart(2, '0');
+                const dateStr = `${calendarCurrentYear}-${mStr}-${dStr}`;
+
+                const isInArcRange = (dateStr >= "2026-10-01" && dateStr <= "2027-01-01");
+
+                let completedRulesCount = 0;
+                if (isInArcRange && progressData[dateStr] && progressData[dateStr].rules) {
+                    completedRulesCount = Object.values(progressData[dateStr].rules).filter(Boolean).length;
+                }
+
+                const isSelected = (dateStr === selectedActiveDate);
+
+                let bgClass = "bg-slate-950 text-slate-400 border-slate-800";
+                if (!isInArcRange) {
+                    bgClass = "bg-black text-slate-700 border-slate-900 opacity-30 cursor-not-allowed";
+                } else if (isSelected) {
+                    bgClass = "bg-cyan-400 text-black border-cyan-300 font-bold shadow-[0_0_8px_rgba(0,240,255,0.6)]";
+                } else if (completedRulesCount === totalRules && totalRules > 0) {
+                    bgClass = "bg-cyan-950/80 text-cyan-300 border-cyan-400";
+                } else if (completedRulesCount > 0) {
+                    bgClass = "bg-slate-900 text-cyan-400 border-cyan-500/50";
+                }
+
+                const clickAction = isInArcRange ? `onclick="onDateInputChange('${dateStr}')"` : '';
+
+                gridContainer.innerHTML += `
+                    <div ${clickAction} class="h-8 border ${bgClass} flex flex-col items-center justify-center cursor-pointer transition-all text-[10px] font-system">
+                        <span>${day}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderTrendLineChart() {
+            const usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            const userData = usersDb[loggedInUser] || { progressData: {}, customRules: [...defaultWinterRules] };
+            const progressData = userData.progressData || {};
+            const totalRules = (userData.customRules || defaultWinterRules).length;
+
+            const svg = document.getElementById('trend-line-chart');
+            const gridLinesHTML = `
+                <line x1="0" y1="0" x2="920" y2="0" stroke="#1e293b" stroke-width="1" />
+                <line x1="0" y1="35" x2="920" y2="35" stroke="#1e293b" stroke-width="1" />
+                <line x1="0" y1="70" x2="920" y2="70" stroke="#1e293b" stroke-width="1" />
+                <line x1="0" y1="105" x2="920" y2="105" stroke="#1e293b" stroke-width="1" />
+                <line x1="0" y1="140" x2="920" y2="140" stroke="#1e293b" stroke-width="1" />
+            `;
+
+            let pointsArr = [];
+            let start = new Date("2026-10-01");
+            let end = new Date("2027-01-01");
+            let totalDaysSpan = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+            let curr = new Date(start);
+            let idx = 0;
+            while (curr <= end) {
+                const yyyy = curr.getFullYear();
+                const mm = String(curr.getMonth() + 1).padStart(2, '0');
+                const dd = String(curr.getDate()).padStart(2, '0');
+                const dStr = `${yyyy}-${mm}-${dd}`;
+
+                let completed = 0;
+                if (progressData[dStr] && progressData[dStr].rules) {
+                    completed = Object.values(progressData[dStr].rules).filter(Boolean).length;
+                }
+                let percentage = totalRules > 0 ? (completed / totalRules) * 100 : 0;
+
+                let x = (idx / (totalDaysSpan - 1)) * 920;
+                let y = 140 - (percentage / 100) * 140;
+
+                pointsArr.push({ x, y, date: dStr, percentage });
+
+                curr.setDate(curr.getDate() + 1);
+                idx++;
+            }
+
+            let polylinePoints = pointsArr.map(p => `${p.x},${p.y}`).join(' ');
+            let circlesHTML = pointsArr.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2" fill="#00f0ff" />`).join('');
+
+            svg.innerHTML = gridLinesHTML + `
+                <polyline fill="none" stroke="#00f0ff" stroke-width="2" points="${polylinePoints}" />
+                ${circlesHTML}
+            `;
+        }
+
+        function setSleepHours(hours) {
+            if (!loggedInUser) return;
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            
+            if (!usersDb[loggedInUser].progressData[selectedActiveDate]) {
+                usersDb[loggedInUser].progressData[selectedActiveDate] = { rules: {}, sleepHours: null };
+            }
+
+            if (usersDb[loggedInUser].progressData[selectedActiveDate].sleepHours === hours) {
+                usersDb[loggedInUser].progressData[selectedActiveDate].sleepHours = null;
+            } else {
+                usersDb[loggedInUser].progressData[selectedActiveDate].sleepHours = hours;
+            }
+
+            localStorage.setItem('winter_arc_users_db', JSON.stringify(usersDb));
+            loadUserData();
+        }
+
+        function toggleRule(ruleKey) {
+            if (!loggedInUser) return;
+            let usersDb = JSON.parse(localStorage.getItem('winter_arc_users_db')) || {};
+            
+            if (!usersDb[loggedInUser].progressData[selectedActiveDate]) {
+                usersDb[loggedInUser].progressData[selectedActiveDate] = { rules: {}, sleepHours: null };
+            }
+
+            const rulesObj = usersDb[loggedInUser].progressData[selectedActiveDate].rules || {};
+            const currentState = !!rulesObj[ruleKey];
+            rulesObj[ruleKey] = !currentState;
+            usersDb[loggedInUser].progressData[selectedActiveDate].rules = rulesObj;
+
+            localStorage.setItem('winter_arc_users_db', JSON.stringify(usersDb));
+            loadUserData();
+        }
+    </script>
+</body>
+</html>
